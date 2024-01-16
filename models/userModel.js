@@ -26,8 +26,6 @@ const userSchema = new mongoose.Schema({
         type: Number,
         require:true
     }
-
-   
     
 },{timestamp:true})
 

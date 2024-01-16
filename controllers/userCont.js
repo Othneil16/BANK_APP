@@ -1,4 +1,5 @@
-const userModel = require('../models/userModel')
+const userModel = require("../models/userModel") 
+const accountModel = require("../models/accountModel")
 const bcrypt = require('bcrypt')
 const {myValidate} = require('../helpers/validation')
 const jwt = require('jsonwebtoken')
@@ -24,7 +25,8 @@ exports.signUp = async (req, res)=>{
     } 
        const salt = bcrypt.genSaltSync(10)
        const hashedPassword = bcrypt.hashSync(userPassword,salt)
-
+       
+       const hashedTransPin = bcrypt.hashSync(transactionPin,salt)
      
     
        const user = await new userModel({
@@ -33,11 +35,12 @@ exports.signUp = async (req, res)=>{
         phoneNumber, 
         email: email.toUpperCase(),
         password: hashedPassword,
-        transactionPin
+        transactionPin: hashedTransPin
+        })
 
-       })
 
-    
+
+      
        await user.save()
 
        return res.status(201).json({
