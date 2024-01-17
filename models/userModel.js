@@ -19,13 +19,41 @@ const userSchema = new mongoose.Schema({
         unique:true
     },
     password:{
-        type: Number,
+        type: String,
         require:true
     },
     transactionPin:{
-        type: Number,
+        type: String,
         require:true
-    }
+    },
+    accountNumber: { 
+        type: String, 
+        unique: true, 
+        required: true 
+    },
+    balance: { 
+        type: Number,
+        default: 0 
+    },
+    userId:{
+        type: String,
+        required:true
+    },
+    withdraws:[{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref:"withdraws",
+    }],
+    transfers:[{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref:"transfers",
+    }],
+    deposits:[{
+        type: String
+}],
+    transHist:[{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref:"TransHistory",
+    }]
     
 },{timestamp:true})
 
