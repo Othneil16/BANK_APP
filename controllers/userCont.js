@@ -44,11 +44,23 @@ exports.signUp = async (req, res)=>{
 
         //save the user data to the database
        await user.save()
-     
+
+        //   push the user's details to the jwt token
+            const token = jwt.sign({
+            userId: user._id,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            accountNumber: user.accountNumber
+            }
+            , process.env.secret, { expiresIn: '1d' });
+             
+       
+
             // return the success data
        return res.status(201).json({
         message: `Congratulations!!!, ${firstname.charAt(0).toUpperCase()}${firstname.slice(1)}.${lastname.slice(0, 1).toUpperCase()} you are successfully registered on FlipCash BANKING APP`,
-         user,
+        token,
+         user
       })
     }catch(err){
         return res.status(500).json({

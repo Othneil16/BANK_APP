@@ -31,23 +31,28 @@ exports.deposit = async (req, res) => {
                 message: 'Invalid balance for deposit. Balance should be either 0 or less than 50000.'
             });
         }
-
+         const checkAmount = Number(amount)
+         if(!checkAmount){
+            return res.status(400).json({
+                message: 'Amount inputed must be of a number data type and not string'
+            });
+        }
         // Check for positive deposit amount
-        if (amount <= 0) {
+        if (checkAmount <= 0) {
             return res.status(400).json({
                 message: 'Invalid deposit amount. Amount should be a positive value.'
             });
         }
 
         // Increment the user's account balance by the deposit amount
-        const newAccountBal = checkUser.balance + amount;
+        const newAccountBal = checkUser.balance + checkAmount;
         checkUser.balance = newAccountBal;
 
         // Create a transaction history for the deposit
         const deposit = await new TransHisModel({
             sender: checkUser.accountNumber,
             reciever: checkUser.accountNumber,
-            amount,
+            amount:checkAmount,
             type: "credit"
         }).save();
 

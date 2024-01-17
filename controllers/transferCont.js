@@ -31,25 +31,39 @@ exports.transfer = async (req, res) => {
                 message: 'Invalid transaction pin, please type in a correct pin'
             });
         }
+         
+        // converting the amount to a number data type
+        const checkAmount = Number(amount)
+        if(!checkAmount){
+            return res.status(400).json({
+                message: 'Amount inputed must be of a number data type and not string'
+            });
+        }
 
+        // Check for positive deposit amount
+        if (checkAmount <= 0) {
+            return res.status(400).json({
+                message: 'Invalid transfer amount. Amount should be a positive value.'
+            });
+        }
         // Check if the account balance is greater than the amount for the transfer
-        if (amount > checkUser.balance) {
+        if (checkAmount > checkUser.balance) {
             return res.status(400).json({
                 message: 'Insufficient Balance, please deposit to carry out this transaction'
             });
         }
 
         // Decrement the sender's account balance and increment the receiver's account balance
-        const newAccountBalForSender = checkUser.balance - amount;
+        const newAccountBalForSender = checkUser.balance - checkAmount;
         checkUser.balance = newAccountBalForSender;
-        const newAccountBalForReceiver = reciever.balance + amount;
+        const newAccountBalForReceiver = reciever.balance + checkAmount;
         reciever.balance = newAccountBalForReceiver;
 
         // Create a new transfer instance
         const transfer = new transferModel({
             SendrAcctNum: checkUser.accountNumber,
             recvrAcctNum: reciever.accountNumber,
-            amount,
+            amount:checkAmount,
             type: "debit",
             userId:checkUser.userId
         });
@@ -57,19 +71,13 @@ exports.transfer = async (req, res) => {
         // Save the transfer to the database
         await transfer.save();
 
-        // Create and save the transaction history id of the sender as a debit 
-        const depositToSender = await new TransHisModel({
-            sender: checkUser.accountNumber,
-            reciever: reciever.accountNumber,
-            amount,
-            type: "debit"
-        }).save();
+       
 
         // Create and save the transaction history id of the reciever as a credit
         const depositToReceiver = await new TransHisModel({
             sender: checkUser.accountNumber,
             reciever: reciever.accountNumber,
-            amount,
+            amount:checkAmount,
             type: "credit",
           
         }).save();
@@ -77,8 +85,8 @@ exports.transfer = async (req, res) => {
         // Push the transfer id of the sender to the user's transfers 
         checkUser.transfers.push(transfer._id);
 
-       // Push the transaction history id of the sender to the user's transHist as a debit
-       checkUser.transHist.push(depositToSender._id);
+       // Push the transfer id of the sender to the user's transHist as a debit
+       checkUser.transHist.push(transfer._id);
         
         // Push the depositToReceiver of the reciever to the user's deposits
         reciever.deposits.push(depositToReceiver._id);
@@ -96,7 +104,7 @@ exports.transfer = async (req, res) => {
             transfer: {
                 sender: checkUser.accountNumber,
                 receiver: reciever.accountNumber,
-                amount,
+                amount:checkAmount,
                 type: "debit",
             },
             sender: checkUser,
