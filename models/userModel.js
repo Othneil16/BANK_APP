@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     }],
     deposits:[{
         type: String
-}],
+    }],
     transHist:[{
         type: mongoose.SchemaTypes.ObjectId,
         ref:"TransHistory",

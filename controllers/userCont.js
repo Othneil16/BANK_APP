@@ -61,11 +61,12 @@ exports.signIn = async (req, res) => {
     try {
         const { identifier, password } = req.body;
 
-        // Check if the identifier is an email or phoneNumber
+        // Check if the identifier is an email or accountNumber 
         const isEmail = /\S+@\S+\.\S+/.test(identifier);
         const isAcctNumber = /^\d{10}$/.test(identifier);
+      ;
 
-        if (!isEmail && !isAcctNumber) {
+        if (!isEmail && !isAcctNumber ) {
             return res.status(400).json({
                 message: 'Invalid identifier. Please use a valid email or account number.'
             });

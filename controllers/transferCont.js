@@ -57,7 +57,7 @@ exports.transfer = async (req, res) => {
         // Save the transfer to the database
         await transfer.save();
 
-        // Create and save the transaction history id of the user as a debit 
+        // Create and save the transaction history id of the sender as a debit 
         const depositToSender = await new TransHisModel({
             sender: checkUser.accountNumber,
             reciever: reciever.accountNumber,
@@ -65,7 +65,7 @@ exports.transfer = async (req, res) => {
             type: "debit"
         }).save();
 
-        // Create and save the transaction history id of the user as a credit
+        // Create and save the transaction history id of the reciever as a credit
         const depositToReceiver = await new TransHisModel({
             sender: checkUser.accountNumber,
             reciever: reciever.accountNumber,
@@ -98,7 +98,6 @@ exports.transfer = async (req, res) => {
                 receiver: reciever.accountNumber,
                 amount,
                 type: "debit",
-                timestamp: transfer.createdAt // or any other timestamp you want to include
             },
             sender: checkUser,
             receiver: reciever

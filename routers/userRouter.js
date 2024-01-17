@@ -12,7 +12,7 @@ router.post('/sign-up', signUp)
 router.post('/sign-in', signIn)
 
 
-// for user depositing into is account
+// for user depositing into his account
 router.post ("/deposit",authenticate, deposit)
 
 // for user traansfering out of the account
