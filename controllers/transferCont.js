@@ -55,9 +55,9 @@ exports.transfer = async (req, res) => {
 
         // Decrement the sender's account balance and increment the receiver's account balance
         const newAccountBalForSender = checkUser.balance - checkAmount;
-        checkUser.balance = newAccountBalForSender;
+        checkUser.balance = newAccountBalForSender - 10
         const newAccountBalForReceiver = reciever.balance + checkAmount;
-        reciever.balance = newAccountBalForReceiver;
+        reciever.balance = newAccountBalForReceiver - 10
 
         // Create a new transfer instance
         const transfer = new transferModel({

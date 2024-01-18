@@ -13,8 +13,9 @@ const withdrawSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    withdrawId: {
+    type: {
         type: String,
+        enum:["debit", "credit"],
         required: true
     }
 });

@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         require:true
     }, 
+    profileImage:{
+        type: String,
+        require:true
+    }, 
     phoneNumber:{
         type: String,
         require:true,
@@ -27,6 +31,11 @@ const userSchema = new mongoose.Schema({
         require:true
     },
     accountNumber: { 
+        type: String, 
+        unique: true, 
+        required: true 
+    },
+    fullName: { 
         type: String, 
         unique: true, 
         required: true 
@@ -53,6 +62,15 @@ const userSchema = new mongoose.Schema({
     transHist:[{
         type: mongoose.SchemaTypes.ObjectId,
         ref:"TransHistory",
+    }],
+    electricity:[{
+        type: String,
+    }],
+    betting:[{
+        type: String,
+    }],
+    airtime:[{
+        type: String,
     }]
     
 },{timestamp:true})

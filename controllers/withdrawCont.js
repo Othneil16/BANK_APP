@@ -1,11 +1,12 @@
 const userModel = require("../models/userModel");
+const withdrawModel = require("../models/withdrawModel")
 const TransHisModel = require("../models/transHistMod");
 const bcrypt = require('bcrypt');
 
-exports.deposit = async (req, res) => {
+exports.withdraw = async (req, res) => {
     try {
         const { userId } = req.user;
-        const { amount, transacPin } = req.body;
+        const { amount, transacPin, recieverAcctNum } = req.body;
 
         // Check whether the userId is present in the database
         const checkUser = await userModel.findById(userId);
@@ -25,42 +26,52 @@ exports.deposit = async (req, res) => {
             });
         }
 
-        // Check if the user's acctBal is 0 or less than 50000
-        if (!(checkUser.balance === 0 || checkUser.balance < 50000)) {
-            return res.status(400).json({
-                message: 'Invalid balance for deposit. Balance should be either 0 or less than 50000.'
-            });
-        }
+      
          const checkAmount = Number(amount)
          if(!checkAmount){
             return res.status(400).json({
-                message: 'Amount inputed must be of a number data type and not string'
+                message: 'Amount to be deposited must be of a number data type and not string'
             });
         }
+
         // Check for positive deposit amount
         if (checkAmount <= 0) {
             return res.status(400).json({
                 message: 'Invalid deposit amount. Amount should be a positive value.'
             });
         }
+         
+          // Check if the account balance is greater than the amount for the transfer
+          if (checkAmount > checkUser.balance) {
+            return res.status(400).json({
+                message: 'Insufficient Balance, please deposit to carry out this transaction'
+            });
+        }
+        
+          // Validate recvrAcctNum to be exactly 10 digits
+          if (!/^\d{10}$/.test(recieverAcctNum)) {
+            return res.status(400).json({
+                message: 'Invalid receiver account number. It should be exactly 10 digits.'
+            });
+        }
 
-        // Increment the user's account balance by the deposit amount
-        const newAccountBal = checkUser.balance + checkAmount;
-        checkUser.balance = newAccountBal - 10;
+        // decrement the user's account balance by the deposit amount
+        const newAccountBal = checkUser.balance - checkAmount;
+        checkUser.balance = newAccountBal - 10
 
         // Create a transaction history for the deposit
-        const deposit = await new TransHisModel({
-            sender: checkUser.accountNumber,
-            reciever: checkUser.accountNumber,
+        const withdraw = await new withdrawModel({
+            SendrAcctNum: checkUser.accountNumber,
+            recvrAcctNum:recieverAcctNum,
             amount:checkAmount,
-            type: "credit"
+            type: "debit"
         }).save();
 
         // Push the depositId to the user's deposit array
-        checkUser.deposits.push(deposit._id);
+        checkUser.withdraws.push(withdraw._id);
 
         // Push the depositId to the user's TransHisModel array
-        checkUser.transHist.push(deposit._id);
+        checkUser.transHist.push(withdraw._id);
 
         // Save the user's data
         await checkUser.save();

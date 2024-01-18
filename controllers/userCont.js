@@ -2,22 +2,29 @@ const userModel = require("../models/userModel")
 const bcrypt = require('bcrypt')
 const {myValidate} = require('../utilities/validator')
 const jwt = require('jsonwebtoken')
+const cloudinary = require('../utilityMW/cloudinary.js')
+
 
 exports.signUp = async (req, res)=>{
     try{
        const {firstname, lastname, phoneNumber, email, userPassword, confirmPassword, transactionPin} = req.body
-      
-       await myValidate.validateAsync(req.body,(err,data)=>{
+    //    getting the image from the req.file(cloudinary)
+    
+    await myValidate.validateAsync(req.body,(err,data)=>{
         if (err) {
-           return res.json(err.message)
+            return res.json("Validation Failed", err.message)
         } else {
             return  res.json(data) 
         }
-       }
+    }
     )
+
+    const file = req.file.path
+    const result = await cloudinary.uploader.upload(file)
     
-    const checkPassword = confirmPassword === userPassword
-    if (!checkPassword) {
+    // // const checkPassword = confirmPassword === userPassword
+    // console.log(req.body)
+    if (confirmPassword !== userPassword) {
        return res.status(404).json({
        message:`incorrect Password, pls type-in a correct password that match`
        })
@@ -36,8 +43,10 @@ exports.signUp = async (req, res)=>{
         email: email.toUpperCase(),
         password: hashedPassword,
         transactionPin: hashedTransPin,
-        accountNumber: phoneNumber.slice(1)
-        })
+        accountNumber: phoneNumber.slice(1),
+        profileImage:result.secure_url,
+        fullName: `${firstname.charAt(0).toUpperCase()}${firstname.slice(1)}.${lastname.slice(0, 1).toUpperCase()}`
+      })
          
         // re-assigning the id of the user to the variable user.userId
         user.userId = user._id  
@@ -50,12 +59,12 @@ exports.signUp = async (req, res)=>{
             userId: user._id,
             email: user.email,
             phoneNumber: user.phoneNumber,
-            accountNumber: user.accountNumber
+            accountNumber: user.accountNumber,
             }
             , process.env.secret, { expiresIn: '1d' });
              
        
-
+ 
             // return the success data
        return res.status(201).json({
         message: `Congratulations!!!, ${firstname.charAt(0).toUpperCase()}${firstname.slice(1)}.${lastname.slice(0, 1).toUpperCase()} you are successfully registered on FlipCash BANKING APP`,
