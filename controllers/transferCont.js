@@ -71,24 +71,32 @@ exports.transfer = async (req, res) => {
         // Save the transfer to the database
         await transfer.save();
 
-       
-        // Create and save the transaction history id of the reciever as a credit
-        const depositToSender = await new TransHisModel({
-            sender: checkUser.accountNumber,
-            reciever: reciever.accountNumber,
-            amount:checkAmount,
-            type: "debit",
-          
-        }).save();
+    // Create and save the transaction history id of the sender as a debit
+    const depositToSender = await new TransHisModel({
+        sender: checkUser.accountNumber,
+        reciever: reciever.accountNumber,
+        amount: checkAmount,
+        type: "debit",
+    }).save();
+
+    // Create and save the transaction history id of the receiver as a credit
+    const depositToReceiver = await new TransHisModel({
+        sender: reciever.accountNumber,
+        reciever: checkUser.accountNumber,
+        amount: checkAmount,
+        type: "credit",
+    }).save();
+
+
         
-        // Create and save the transaction history id of the reciever as a credit
-        const depositToReceiver = await new TransHisModel({
-            sender: checkUser.accountNumber,
-            reciever: reciever.accountNumber,
-            amount:checkAmount,
-            type: "credit",
+        // // Create and save the transaction history id of the reciever as a credit
+        // const depositToReceiver = await new TransHisModel({
+        //     sender: checkUser.accountNumber,
+        //     reciever: reciever.accountNumber,
+        //     amount:checkAmount,
+        //     type: "credit",
           
-        }).save();
+        // }).save();
 
         // Push the transfer id of the sender to the user's transfers 
         checkUser.transfers.push(depositToSender._id);
@@ -97,12 +105,11 @@ exports.transfer = async (req, res) => {
        checkUser.transHist.push(depositToSender._id);
         
        
-        // Push the transaction history id of the receiver to the user's deposits as a credit
-        reciever.transHist.push(depositToReceiver._id);
-        
         // Push the depositToReceiver of the reciever to the user's deposits
         reciever.deposits.push(depositToReceiver._id);
-
+        
+        // Push the transaction history id of the receiver to the user's deposits as a credit
+        reciever.transHist.push(depositToReceiver._id);
     
         // Save the sender and receiver data
         await checkUser.save();
