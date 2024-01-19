@@ -72,7 +72,15 @@ exports.transfer = async (req, res) => {
         await transfer.save();
 
        
-
+        // Create and save the transaction history id of the reciever as a credit
+        const depositToSender = await new TransHisModel({
+            sender: checkUser.accountNumber,
+            reciever: reciever.accountNumber,
+            amount:checkAmount,
+            type: "debit",
+          
+        }).save();
+        
         // Create and save the transaction history id of the reciever as a credit
         const depositToReceiver = await new TransHisModel({
             sender: checkUser.accountNumber,
@@ -83,16 +91,18 @@ exports.transfer = async (req, res) => {
         }).save();
 
         // Push the transfer id of the sender to the user's transfers 
-        checkUser.transfers.push(transfer._id);
+        checkUser.transfers.push(depositToSender._id);
 
        // Push the transfer id of the sender to the user's transHist as a debit
-       checkUser.transHist.push(transfer._id);
+       checkUser.transHist.push(depositToSender._id);
+        
+       
+        // Push the transaction history id of the receiver to the user's deposits as a credit
+        reciever.transHist.push(depositToReceiver._id);
         
         // Push the depositToReceiver of the reciever to the user's deposits
         reciever.deposits.push(depositToReceiver._id);
 
-        // Push the transaction history id of the receiver to the user's deposits as a credit
-        reciever.transHist.push(depositToReceiver._id);
     
         // Save the sender and receiver data
         await checkUser.save();
