@@ -19,7 +19,7 @@ exports.signUp = async (req, res)=>{
     }
     )
 
-    const file = req.file.path
+    // const file = req.file.path
     // const result = await cloudinary.uploader.upload(file)
     
     // // const checkPassword = confirmPassword === userPassword
