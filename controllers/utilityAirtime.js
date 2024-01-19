@@ -5,8 +5,8 @@ const transHistMod = require('../models/transHistMod')
 
 exports.airtimeTrans = async (req, res)=>{
     try {
-        const userId = req.user.userId
-        const airtimeId = req.params.airtimeId
+        const {userId} = req.user
+        const {airtimeId} = req.params
         const {airtimeName, phoneNumber, amount, transacPin}= req.body
 
         const user = await userModel.findById(userId)
@@ -22,6 +22,13 @@ exports.airtimeTrans = async (req, res)=>{
                 message:'Unable to find airtime with this name'
             })
         }
+
+       
+        if (airtime.airtimeName !== airtimeName) {
+            return res.status(400).json({
+                message: 'AirtimeId and airtimeName do not match'
+            });
+        }
         const comparetransacPin = bcrypt.compareSync(transacPin, user.transactionPin);
 
         if (!comparetransacPin) {
@@ -31,9 +38,9 @@ exports.airtimeTrans = async (req, res)=>{
          }
           
         
-        if (!/^\d{11}$/.test(phoneNumber)) {
+        if (!/^\d{10}$/.test(phoneNumber)) {
             return res.status(400).json({
-                message: 'Incorrect phone number. It should be exactly 11 digits.'
+                message: 'Incorrect phone number.  phone number should be exactly 11 digits.'
             });
          }
     
@@ -62,10 +69,10 @@ exports.airtimeTrans = async (req, res)=>{
         }
 
         const newAccountBalForSender = user.balance - checkAmount
-        user.balance = newAcccountBalForSender
+        user.balance = newAccountBalForSender
 
-        const airtimeHistory = await new transHistModel({
-            sender: user.accountNumber,
+        const airtimeHistory = await new transHistMod({
+        sender: user.accountNumber,
         reciever:phoneNumber,
         amount:checkAmount,
         type:"debit"
@@ -74,7 +81,11 @@ exports.airtimeTrans = async (req, res)=>{
         user.airtime.push(airtimeHistory._id)
         user.transHist.push(airtimeHistory._id)
         user.save()
-
+        
+        return res.status(200).json({
+            message: `successfully sent airtime to ${phoneNumber}`,
+            data:user
+        })
         
     } catch (err) {
         res.status(500).json({

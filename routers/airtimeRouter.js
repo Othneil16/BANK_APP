@@ -1,8 +1,9 @@
-const router = require('express').Router()
-const { authenticate } = require("../middleware/authentication")
-
-const {airtimeTrans} = require('../controllers/airtimeCont')
-router.post('/purchase-airtime/:airtimeId', authenticate, airtimeTrans)
+const airtimeRouter = require('express').Router()
 
 
-module.exports = router
+const {createAirtime, getAll} = require('../controllers/airtimeCont')
+
+airtimeRouter.post("/create-airtime", createAirtime)
+
+airtimeRouter.get("/allairtime", getAll)
+module.exports = airtimeRouter

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const airtimeSchema = new mongoose.Schema({
     airtimeName:{
         type: String,
-        enum:["Airtel", 'MTN', "Elisalat", "Glo"],
+        enum:["AIRTEL", "MTN", "ETISALAT", "GLO"],
         required: true
     },
     airtimeId: { 

@@ -1,10 +1,10 @@
-const router =require('express').Router()
+const bettingRouter =require('express').Router()
 
-
-const { authenticate } = require("../middleware/authentication")
 
 const {betTrans} = require('../controllers/airtimeCont')
-router.post('/place-bet/:betId', authenticate, betTrans)
+const { createBet, getAll } = require('../controllers/bettingCont')
+ 
+bettingRouter.post("/create-bet", createBet)
+bettingRouter.get("/all-bets", getAll)
 
-
-module.exports = router
+module.exports = bettingRouter

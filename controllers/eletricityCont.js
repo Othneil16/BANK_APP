@@ -1,18 +1,11 @@
 const eletricityModel = require("../models/electricityMod")
-const userModel = require("../models/userModel")
+
 
 exports.createElect = async (req, res) => {
     try {
         const {eletricityName} = req.body
-        const userId = req.user.userId
-        const user = await userModel.findById(userId)
         const eletricity = await eletricityModel.create({eletricityName})
         
-        if (!user) {
-            return res.status(404).json({
-                message: "Unable to find user"
-            })
-        }
         eletricity.eletricityId = eletricity._id
         await eletricity.save()
 

@@ -9,8 +9,8 @@ exports.elecTrans = async (req, res)=>{
     const {elecId} = req.params
     const {elecAcctNum, amount, transacPin} = req.body
 
-    const user = await userModel.findById({userId})
-    const electricity = await electricityMod.findById({elecId})
+    const user = await userModel.findById(userId)
+    const electricity = await electricityMod.findById(elecId)
     if (!user) {
         return res.status(404).json({
             message: 'User not found'
@@ -52,7 +52,7 @@ exports.elecTrans = async (req, res)=>{
     
     if (checkAmount < 1000) {
         return res.status(400).json({
-            message: 'Insufficient amount, electricity placed needs to be 1000 and above'
+            message: 'Insufficient amount, electricity payment placed is to be 1000 and above'
         });
     }
 
@@ -67,7 +67,7 @@ exports.elecTrans = async (req, res)=>{
 
     const electricityHist = await new transHistMod({
         sender: user.accountNumber,
-        reciever:elecAcctNum,
+        reciever:elecId,
         amount:checkAmount,
         type:"debit"
     }).save()

@@ -2,31 +2,43 @@ const { deposit } = require("../controllers/depositCont")
 const { getTransactionHistory } = require("../controllers/transactionHistCont")
 const { transfer } = require("../controllers/transferCont")
 const { signUp, signIn } = require("../controllers/userCont")
+const { betTrans } = require("../controllers/utilBetCont")
+const { airtimeTrans } = require("../controllers/utilityAirtime")
+const { elecTrans } = require("../controllers/utilityElec")
 const { withdraw } = require("../controllers/withdrawCont")
 const { authenticate } = require("../middleware/authentication")
 
 const uploads = require("../utilityMW/multer")
 
-const router = require("express").Router()
+const userRouter = require("express").Router()
 
 // for user signing-up into the bank app
 // router.post('/sign-up', uploads.single('profileImage'), signUp)
-router.post('/sign-up', signUp)
+userRouter.post('/sign-up', signUp)
 
 // for user logging-in into the bank app
-router.post('/sign-in', signIn)
+userRouter.post('/sign-in', signIn)
 
 
 // for user depositing into his account
-router.post ("/deposit",authenticate, deposit)
+userRouter.post ("/deposit",authenticate, deposit)
 
 // for user traansfering out of the account
-router.post("/transfer", authenticate,transfer)
+userRouter.post("/transfer", authenticate,transfer)
 
 // for user withdrawing into another account
-router.post("/withdraw", authenticate, withdraw)
+userRouter.post("/withdraw", authenticate, withdraw)
 
 // for the user to see all transaction history
-router.post("/getallmyhistory", authenticate, getTransactionHistory)
+userRouter.get("/getallmyhistory", authenticate, getTransactionHistory)
 
-module.exports = router
+// user pay for airtime
+userRouter.post('/purchase-airtime/:airtimeId', authenticate, airtimeTrans)
+
+// user pay for bet
+userRouter.post('/place-bet/:betId', authenticate, betTrans)
+
+// user pay for electricity
+userRouter.post('/pay-electbill/:elecId', authenticate, elecTrans)
+
+module.exports = userRouter

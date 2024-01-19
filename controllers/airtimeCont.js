@@ -1,23 +1,17 @@
 const airtimeModel = require("../models/airtimeMod")
 const userModel = require("../models/userModel")
 
-exports.createElect = async (req, res) => {
+exports.createAirtime = async (req, res) => {
     try {
         const {airtimeName} = req.body
-        const userId = req.user.userId
-        const user = await userModel.findById(userId)
+       
         const airtime = await airtimeModel.create({airtimeName})
-        
-        if (!user) {
-            return res.status(404).json({
-                message: "Unable to find user"
-            })
-        }
         airtime.airtimeId = airtime._id
         await airtime.save()
 
-        res.status(200).json({
-            message: "You have successfully created an airtime"
+        return res.status(200).json({
+            message: "You have successfully created an airtime",
+            airtime
         })
     } catch (error) {
         res.status(500).json({

@@ -1,10 +1,9 @@
-const router =require('express').Router()
+const { createElect, getAll } = require('../controllers/eletricityCont')
+
+const electricityRouter = require('express').Router()
+
+electricityRouter.post("/create-electricity", createElect)
+electricityRouter.get("/all-electricities", getAll)
 
 
-const { authenticate } = require("../middleware/authentication")
-
-const {elecTrans} = require('../controllers/airtimeCont')
-router.post('/pay-elecbill/:elecId', authenticate, elecTrans)
-
-
-module.exports = router
+module.exports = electricityRouter

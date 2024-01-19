@@ -2,15 +2,19 @@ const userModel = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const bettingModel = require('../models/bettingModel')
 const transHistMod = require('../models/transHistMod')
+// const mongoose = require("mongoose")
 
 exports.betTrans = async (req, res)=>{
   try {
     const {userId} = req.user
     const {betId} = req.params
+    
+    // const isValidObjectId = mongoose.Types.ObjectId.isValid(betId);
+    
     const {betAcctNum, amount, transacPin} = req.body
 
-    const user = await userModel.findById({userId})
-    const bet = await bettingModel.findById({betId})
+    const user = await userModel.findById(userId)
+    const bet = await bettingModel.findById(betId)
     if (!user) {
         return res.status(404).json({
             message: 'User not found'
@@ -33,7 +37,7 @@ exports.betTrans = async (req, res)=>{
      // Validate recvrAcctNum to be exactly 10 digits
     if (!/^\d{10}$/.test(betAcctNum)) {
         return res.status(400).json({
-            message: 'Invalid bet account number. It should be exactly 10 digits.'
+            message: 'Invalid bet account number. account number should be exactly 10 digits.'
         });
      }
 
