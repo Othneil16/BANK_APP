@@ -142,38 +142,40 @@ exports.signIn = async (req, res) => {
 }
 
 
+
+
 exports.signOut = async (req, res) => {
-    try {
-        const { userId, token } = req.user;
+    try{
+        const {userId} = req.user
+        const {token} = req.user
         const user = await userModel.findById(userId);
 
-        if (!user) {
+    if(!user){
             return res.status(404).json({
-                message: 'User not found'
-            });
+                message: 'This user not found'
+            })
         }
-
+    
         if (!user.token || user.token !== token) {
             return res.status(400).json({
                 message: 'User does not have a valid token'
             });
         }
 
-        // Invalidate the token by setting its expiration to a past date
-        const pastDate = new Date(0);
-        const newToken = jwt.sign({}, process.env.secret, { expiresIn: pastDate });
+       // Revoke token by setting its expiration to a past date
+       const decodedToken = jwt.verify(user.token, process.env.secret);
+       decodedToken.exp = 1;
 
-        // Update the user's token with the new invalidated token
-        user.token = newToken;
-        await user.save();
-
-        return res.status(200).json({
-            message: 'You have signed out successfully'
-        });
-
-    } catch (err) {
+   return res.status(200).json({
+        message: 'You have signed out successfully'
+    })
+        
+        
+    }catch(err){
         return res.status(500).json({
             message: err.message
-        });
+        })
     }
-};
+}
+
+

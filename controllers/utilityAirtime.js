@@ -6,8 +6,7 @@ const transHistMod = require('../models/transHistMod')
 exports.airtimeTrans = async (req, res)=>{
     try {
         const {userId} = req.user
-        const {airtimeId} = req.params
-        const {airtimeName, phoneNumber, amount, transacPin}= req.body
+        const {airtimeName, phoneNumber, amount, transacPin, airtimeId}= req.body
 
         const user = await userModel.findById(userId)
         const airtime = await airtimeModel.findById(airtimeId)

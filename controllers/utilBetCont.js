@@ -7,11 +7,10 @@ const transHistMod = require('../models/transHistMod')
 exports.betTrans = async (req, res)=>{
   try {
     const {userId} = req.user
-    const {betId} = req.params
     
     // const isValidObjectId = mongoose.Types.ObjectId.isValid(betId);
     
-    const {betAcctNum, amount, transacPin} = req.body
+    const {betAcctNum, amount, transacPin, betId} = req.body
 
     const user = await userModel.findById(userId)
     const bet = await bettingModel.findById(betId)

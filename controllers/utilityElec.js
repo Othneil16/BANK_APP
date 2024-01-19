@@ -6,8 +6,8 @@ const transHistMod = require('../models/transHistMod')
 exports.elecTrans = async (req, res)=>{
   try {
     const {userId} = req.user
-    const {elecId} = req.params
-    const {elecAcctNum, amount, transacPin} = req.body
+    
+    const {elecAcctNum, amount, transacPin, elecId} = req.body
 
     const user = await userModel.findById(userId)
     const electricity = await electricityMod.findById(elecId)

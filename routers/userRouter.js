@@ -38,12 +38,12 @@ userRouter.post("/withdraw", authenticate, withdraw)
 userRouter.get("/getallmyhistory", authenticate, getTransactionHistory)
 
 // user pay for airtime
-userRouter.post('/purchase-airtime/:airtimeId', authenticate, airtimeTrans)
+userRouter.post('/purchase-airtime', authenticate, airtimeTrans)
 
 // user pay for bet
-userRouter.post('/place-bet/:betId', authenticate, betTrans)
+userRouter.post('/place-bet', authenticate, betTrans)
 
 // user pay for electricity
-userRouter.post('/pay-electbill/:elecId', authenticate, elecTrans)
+userRouter.post('/pay-electbill', authenticate, elecTrans)
 
 module.exports = userRouter
