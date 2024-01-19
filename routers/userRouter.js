@@ -1,7 +1,7 @@
 const { deposit } = require("../controllers/depositCont")
 const { getTransactionHistory } = require("../controllers/transactionHistCont")
 const { transfer } = require("../controllers/transferCont")
-const { signUp, signIn } = require("../controllers/userCont")
+const { signUp, signIn, signOut } = require("../controllers/userCont")
 const { betTrans } = require("../controllers/utilBetCont")
 const { airtimeTrans } = require("../controllers/utilityAirtime")
 const { elecTrans } = require("../controllers/utilityElec")
@@ -18,6 +18,11 @@ userRouter.post('/sign-up', signUp)
 
 // for user logging-in into the bank app
 userRouter.post('/sign-in', signIn)
+
+
+// for user logging-out into the bank app
+userRouter.post('/sign-out',authenticate, signOut)
+
 
 
 // for user depositing into his account
