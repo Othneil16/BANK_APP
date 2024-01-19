@@ -2,6 +2,7 @@ const userModel = require("../models/userModel")
 const bcrypt = require('bcrypt')
 const {myValidate} = require('../utilities/validator')
 const jwt = require('jsonwebtoken')
+const RevokedToken = require('../models/revokedTokenModel')
 // const cloudinary = require('../utilityMW/cloudinary.js')
 
 
@@ -144,38 +145,65 @@ exports.signIn = async (req, res) => {
 
 
 
-exports.signOut = async (req, res) => {
-    try{
-        const {userId} = req.user
-        const {token} = req.user
-        const user = await userModel.findById(userId);
+// exports.signOut = async (req, res) => {
+//     try{
+//         const {userId, token} = req.user 
+//         const user = await userModel.findById(userId);
 
-    if(!user){
-            return res.status(404).json({
-                message: 'This user not found'
-            })
-        }
+//     if(!user){
+//             return res.status(404).json({
+//                 message: 'This user not found'
+//             })
+//         }
     
-        if (!user.token || user.token !== token) {
-            return res.status(400).json({
-                message: 'User does not have a valid token'
-            });
-        }
+//         if (!user.token || user.token !== token) {
+//             return res.status(400).json({
+//                 message: 'User does not have a valid token'
+//             });
+//         }
 
-       // Revoke token by setting its expiration to a past date
-       const decodedToken = jwt.verify(user.token, process.env.secret);
-       decodedToken.exp = 1;
+//        // Revoke token by setting its expiration to a past date
+//        const decodedToken = jwt.verify(user.token, process.env.secret);
+//        decodedToken.exp = 1;
 
-   return res.status(200).json({
-        message: 'You have signed out successfully'
-    })
+//    return res.status(200).json({
+//         message: 'You have signed out successfully'
+//     })
         
         
-    }catch(err){
-        return res.status(500).json({
-            message: err.message
-        })
+//     }catch(err){
+//         return res.status(500).json({
+//             message: err.message
+//         })
+//     }
+// }
+
+
+exports.signOut = async (req, res) => {
+    try {
+      const authorizationHeader = req.headers.authorization;
+  
+      if (!authorizationHeader) {
+        return res.status(401).json({
+          message: 'Missing token'
+        });
+      }
+  
+      const token = authorizationHeader.split(' ')[1];
+  
+      // Create a new revoked token entry and save it to the database
+      const revokedToken = new RevokedToken({
+        token: token
+      });
+  
+      await revokedToken.save();
+  
+      res.status(200).json({
+        message: 'User logged out successfully'
+      });
+    } catch (error) {
+      res.status(500).json({
+        Error: error.message
+      });
     }
-}
-
-
+  };
