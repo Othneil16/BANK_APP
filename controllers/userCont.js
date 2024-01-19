@@ -87,13 +87,14 @@ exports.signIn = async (req, res) => {
         const isAcctNumber = /^\d{10}$/.test(identifier);
         
         
+       
 
-        if (!isEmail || !isAcctNumber) {
+        if (!isEmail && !isAcctNumber) {
             return res.status(400).json({
                 message: 'Invalid identifier. Please use a valid email or account number.'
             });
         }
-        console.log(`i am an identifier`);
+        
         // Find user by email or accountNumber
         const user = await userModel.findOne({
             $or: [
