@@ -1,6 +1,6 @@
 const express = require('express')
 const config =  require('./config/config')
-
+const cors = require('cors')
 const userRouter  = require('./routers/userRouter')
 const airtimeRouter = require("./routers/airtimeRouter")
 const bettingRouter = require("./routers/bettingRouter")
@@ -11,6 +11,7 @@ const electRouter = require("./routers/electricRouter")
 
 const port = process.env.port
 const app = express()
+app.use(cors())
 app.use(express.json())
 
 app.use(express.static('./uploads'))
