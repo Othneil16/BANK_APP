@@ -2,7 +2,7 @@ const userModel = require("../models/userModel")
 const bcrypt = require('bcrypt')
 const {myValidate} = require('../utilities/validator')
 const jwt = require('jsonwebtoken')
-const cloudinary = require('../utilityMW/cloudinary.js')
+// const cloudinary = require('../utilityMW/cloudinary.js')
 
 
 exports.signUp = async (req, res)=>{
@@ -20,7 +20,7 @@ exports.signUp = async (req, res)=>{
     )
 
     const file = req.file.path
-    const result = await cloudinary.uploader.upload(file)
+    // const result = await cloudinary.uploader.upload(file)
     
     // // const checkPassword = confirmPassword === userPassword
     // console.log(req.body)
@@ -44,7 +44,7 @@ exports.signUp = async (req, res)=>{
         password: hashedPassword,
         transactionPin: hashedTransPin,
         accountNumber: phoneNumber.slice(1),
-        profileImage:result.secure_url,
+        // profileImage:result.secure_url,
         fullName: `${firstname.charAt(0).toUpperCase()}${firstname.slice(1)}.${lastname.slice(0, 1).toUpperCase()}`
       })
          
@@ -79,20 +79,21 @@ exports.signUp = async (req, res)=>{
 }
 
 exports.signIn = async (req, res) => {
+    
+    const {identifier, password } = req.body;    
     try {
-        const { identifier, password } = req.body;
-
         // Check if the identifier is an email or accountNumber 
         const isEmail = /\S+@\S+\.\S+/.test(identifier);
         const isAcctNumber = /^\d{10}$/.test(identifier);
-      ;
+        
+        
 
-        if (!isEmail && !isAcctNumber ) {
+        if (!isEmail || !isAcctNumber) {
             return res.status(400).json({
                 message: 'Invalid identifier. Please use a valid email or account number.'
             });
         }
-
+        console.log(`i am an identifier`);
         // Find user by email or accountNumber
         const user = await userModel.findOne({
             $or: [

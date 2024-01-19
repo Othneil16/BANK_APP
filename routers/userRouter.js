@@ -10,7 +10,8 @@ const uploads = require("../utilityMW/multer")
 const router = require("express").Router()
 
 // for user signing-up into the bank app
-router.post('/sign-up', uploads.single('profileImage'), signUp)
+// router.post('/sign-up', uploads.single('profileImage'), signUp)
+router.post('/sign-up', signUp)
 
 // for user logging-in into the bank app
 router.post('/sign-in', signIn)
