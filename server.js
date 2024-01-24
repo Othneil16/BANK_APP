@@ -16,7 +16,7 @@ app.use(express.json())
 
 app.use(express.static('./uploads'))
 
-app.use("/api/v1/user", userRouter)
+app.use("/api/v1/", userRouter)
 app.use("/api/v1",airtimeRouter)
 app.use("/api/v1",bettingRouter)
 app.use("/api/v1",electRouter)
