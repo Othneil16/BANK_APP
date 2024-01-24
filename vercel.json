@@ -1,5 +1,5 @@
 {
-    "name": "the-bitpay-capital-back-end",
+    "name": "flipCash-bank-app",
     "builds": [
       {
         "src": "server.js",
@@ -8,7 +8,7 @@
     ],
     "headers": [
       {
-        "source": "/api/(.*)",
+        "source": "/api/v1/(.*)",
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
